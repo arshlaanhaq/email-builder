@@ -28,7 +28,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
     storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+    limits: { fileSize: 10 * 1024 * 1024 }, // Increase to 10MB for testing
     fileFilter: (req, file, cb) => {
         const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (allowedTypes.includes(file.mimetype)) {
@@ -38,6 +38,7 @@ const upload = multer({
         }
     },
 });
+
 
 // Middleware
 app.use(bodyParser.json());
@@ -92,10 +93,11 @@ app.post("/uploadImage", upload.single('image'), (req, res) => {
         return res.status(400).json({ error: "No file uploaded" });
     }
 
+    console.log('Image uploaded:', req.file);
     const imageUrl = `https://email-template-builder-7sb4.onrender.com/uploads/${req.file.filename}`;
-    console.log('Image uploaded successfully:', imageUrl);
     res.json({ imageUrl });
 });
+
 
 app.post('/uploadEmailConfig', async (req, res) => {
     const { title, content, imageUrl } = req.body;

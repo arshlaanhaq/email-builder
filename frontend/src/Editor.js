@@ -45,10 +45,10 @@ function Editor() {
     const handleImageUpload = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
-
+    
         const formData = new FormData();
         formData.append("image", file);
-
+    
         try {
             setLoading(true);
             const response = await axios.post("https://email-template-builder-7sb4.onrender.com/uploadImage", formData, {
@@ -60,10 +60,11 @@ function Editor() {
             setLoading(false);
         } catch (error) {
             setLoading(false);
-            console.error("Error uploading image:", error);
+            console.error("Error uploading image:", error.response || error);
             alert("Image upload failed!");
         }
     };
+    
 
     // Handle save template and download
     const handleSaveAndDownloadTemplate = async () => {
