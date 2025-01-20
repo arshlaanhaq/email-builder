@@ -51,7 +51,7 @@ function Editor() {
 
         try {
             setLoading(true);
-            const response = await axios.post("http://localhost:5000/uploadImage", formData, {
+            const response = await axios.post("https://email-template-builder-7sb4.onrender.com/uploadImage", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -76,14 +76,14 @@ function Editor() {
             setLoading(true);
 
             // Save the email template
-            await axios.post("http://localhost:5000/uploadEmailConfig", {
+            await axios.post("https://email-template-builder-7sb4.onrender.com/uploadEmailConfig", {
                 title,
                 content,
                 imageUrl,
             });
 
             // Fetch the email layout
-            const response = await axios.post("http://localhost:5000/renderAndDownloadTemplate", {
+            const response = await axios.post("https://email-template-builder-7sb4.onrender.com/renderAndDownloadTemplate", {
                 title,
                 content,
                 imageUrl,

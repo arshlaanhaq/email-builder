@@ -81,7 +81,7 @@ app.post("/uploadImage", upload.single('image'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: "No file uploaded" });
     }
-    const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    const imageUrl = `https://email-template-builder-7sb4.onrender.com/uploads/${req.file.filename}`;
     res.json({ imageUrl });
     // console.log(imageUrl)
 });
