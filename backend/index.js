@@ -2,12 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const mongoose = require('mongoose');
+const dotenv = require("dotenv");
 const path = require('path');
 const fs = require('fs');
 const cors = require("cors");
 
 const app = express();
-
+dotenv.config();
+const URI = process.env.MongoDBURI;
 // Multer configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -36,7 +38,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/emailBuilder', {
+mongoose.connect(URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }).then(() => {
@@ -55,7 +57,7 @@ const EmailConfig = mongoose.model('EmailConfig', EmailConfigSchema);
 // API Endpoints
 app.get('/getEmailLayout', async (req, res) => {
     try {
-        
+
         const emailConfig = await EmailConfig.findOne().sort({ _id: -1 });
 
         if (!emailConfig) {
@@ -81,36 +83,42 @@ app.post("/uploadImage", upload.single('image'), (req, res) => {
     }
     const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
     res.json({ imageUrl });
-    console.log(imageUrl)
+    // console.log(imageUrl)
 });
 
 app.post('/uploadEmailConfig', async (req, res) => {
-    const { title, content,  imageUrl } = req.body;
-    await EmailConfig.create({ title, content,  imageUrl });
+    const { title, content, imageUrl } = req.body;
+    await EmailConfig.create({ title, content, imageUrl });
 
     res.status(200).json({ message: "Email config saved successfully!" });
 });
 
-    app.post('/renderAndDownloadTemplate', (req, res) => {
-        const template = fs.readFileSync('./layout.html', 'utf8');
+app.post('/renderAndDownloadTemplate', (req, res) => {
+    const template = fs.readFileSync('./layout.html', 'utf8');
 
 
-        let rendered = template
-            .replace(/{{title}}/g, req.body.title)
-            .replace(/{{content}}/g, req.body.content)       
-            .replace(/{{imageUrl}}/g, req.body.imageUrl);
+    let rendered = template
+        .replace(/{{title}}/g, req.body.title)
+        .replace(/{{content}}/g, req.body.content)
+        .replace(/{{imageUrl}}/g, req.body.imageUrl);
 
 
-        res.setHeader('Content-Type', 'text/html');
-        res.setHeader('Content-Disposition', 'attachment; filename=email-template.html');
-        console.log(req.body.title)
-        res.send(rendered);
-    });
-
-
-
-
-
-app.listen(5000, () => {
-    console.log('Server running on http://localhost:5000');
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Content-Disposition', 'attachment; filename=email-template.html');
+    // console.log(req.body.title)
+    res.send(rendered);
 });
+
+// if (process.env.NODE_ENV === "production") {
+//     const dirPath=  path.resolve();
+//     app.use(express.static("Frontend/build"));
+//     app.get("*", (req, res) => {
+//         res.sendFile(path.resolve(dirPath, "Frontend", "build", "index.html"));
+//     })
+//     }
+
+const PORT = process.env.PORT || 5000
+
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost: ${PORT}`);
+    });
