@@ -35,7 +35,11 @@ const upload = multer({
 
 app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use(cors());
+app.use(cors({
+    origin: 'https://imaginative-conkies-36ddac.netlify.app/', // Replace with your actual Netlify URL
+    methods: ['GET', 'POST'],
+}));
+
 
 // MongoDB connection
 mongoose.connect(URI, {
