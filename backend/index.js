@@ -43,10 +43,12 @@ const upload = multer({
 // Middleware
 app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use(cors({
-    origin: 'https://imaginative-conkies-36ddac.netlify.app/', // Replace with your actual Netlify URL
+    origin: process.env.FRONTEND_URL,
     methods: ['GET', 'POST'],
 }));
+
 
 // MongoDB connection
 mongoose.connect(URI, {
@@ -94,7 +96,7 @@ app.post("/uploadImage", upload.single('image'), (req, res) => {
     }
 
     console.log('Image uploaded:', req.file);
-    const imageUrl = `https://email-template-builder-7sb4.onrender.com/uploads/${req.file.filename}`;
+    const imageUrl = `${process.env.BASE_URL}/${req.file.filename}`;
     res.json({ imageUrl });
 });
 
@@ -118,14 +120,7 @@ app.post('/renderAndDownloadTemplate', (req, res) => {
     res.send(rendered);
 });
 
-// Uncomment below for production setup (if using React or any frontend in build folder)
-// if (process.env.NODE_ENV === "production") {
-//     const dirPath = path.resolve();
-//     app.use(express.static("Frontend/build"));
-//     app.get("*", (req, res) => {
-//         res.sendFile(path.resolve(dirPath, "Frontend", "build", "index.html"));
-//     })
-// }
+
 
 const PORT = process.env.PORT || 5000;
 
