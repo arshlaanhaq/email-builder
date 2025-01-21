@@ -96,7 +96,7 @@ app.post("/uploadImage", upload.single('image'), (req, res) => {
     }
 
     console.log('Image uploaded:', req.file);
-    const imageUrl = `${process.env.BASE_URL}/${req.file.filename}`;
+    const imageUrl = `${process.env.BASE_URL}/uploads/${req.file.filename}`;
     res.json({ imageUrl });
 });
 
